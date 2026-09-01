@@ -21,11 +21,12 @@ MIDTERM-VM-DOCKER-Kubernetes/
 │   ├── .env / .env.example           # Environment variables
 │   └── README.md                     # คู่มือ Docker build, compose & lifecycle
 ├── 03-kubernetes/                     # ส่วนปฏิบัติ 3: Kubernetes (Stateless vs Stateful)
+│   ├── 📖 K8S_LINE_BY_LINE_EXPLANATION.md # 🌟 คู่มืออธิบายโค้ด K8s ทุกบรรทัด ทุกไฟล์
 │   ├── 01-config-secret.yaml         # ConfigMap (DB_HOST, DB_NAME) + Secret (db-password)
 │   ├── 02-stateful-db.yaml           # MySQL StatefulSet + Headless Service (clusterIP: None)
 │   ├── 03-stateless-web.yaml         # Web Deployment (2 Replicas) + NodePort (Port 30080)
 │   ├── standard-deployment-mode/     # (ทางเลือก) รูปแบบ Deployment ล้วนแบบดั้งเดิม
-│   └── README.md                     # คู่มือ kubectl, troubleshooting & scaling
+│   └── README.md                     # คู่มือ kubectl, troubleshooting, scaling & line-by-line guide
 └── README.md                          # หน้าสารบัญและ Quick Cheatsheet รวมทุกส่วน
 ```
 
@@ -50,6 +51,7 @@ MIDTERM-VM-DOCKER-Kubernetes/
    - **คำสั่งรัน:** `docker compose up -d` หรือ `docker build -t exam-myweb:1.0 .`
 
 3. [☸️ **ส่วนปฏิบัติ 3: Kubernetes (Stateless vs Stateful)**](file:///C:/Users/kritt/IdeaProjects/MIDTERM-VM-DOCKER-Kubernetes/03-kubernetes/README.md)
+   - [📖 **คู่มือเจาะลึกทุกบรรทัด (Line-by-Line Guide)**](file:///C:/Users/kritt/IdeaProjects/MIDTERM-VM-DOCKER-Kubernetes/03-kubernetes/K8S_LINE_BY_LINE_EXPLANATION.md)
    - **Config & Secret:** [`01-config-secret.yaml`](file:///C:/Users/kritt/IdeaProjects/MIDTERM-VM-DOCKER-Kubernetes/03-kubernetes/01-config-secret.yaml) (`app-config` + `app-secret`)
    - **StatefulSet (Database):** [`02-stateful-db.yaml`](file:///C:/Users/kritt/IdeaProjects/MIDTERM-VM-DOCKER-Kubernetes/03-kubernetes/02-stateful-db.yaml) (Headless Service: `mysql-0.mysql-service`)
    - **Deployment (Web):** [`03-stateless-web.yaml`](file:///C:/Users/kritt/IdeaProjects/MIDTERM-VM-DOCKER-Kubernetes/03-kubernetes/03-stateless-web.yaml) (NodePort Service: `port 30080`, 2 Replicas)
