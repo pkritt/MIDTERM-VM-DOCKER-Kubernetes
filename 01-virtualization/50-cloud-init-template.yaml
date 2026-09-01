@@ -1,0 +1,39 @@
+# ==============================================================================
+# รูปแบบที่ 1: ตั้งค่า Single Adapter (เฉพาะ NAT Network)
+# ไฟล์: /etc/netplan/50-cloud-init.yaml (หรือ /etc/netplan/00-installer-config.yaml)
+# คำสั่งใช้งาน: sudo netplan apply
+# ==============================================================================
+network:
+  version: 2
+  ethernets:
+    enp0s3: # ตรวจสอบชื่อ Interface ด้วยคำสั่ง 'ip a'
+      dhcp4: no
+      addresses:
+        - 192.168.1xx.10/24 # สำหรับ VM1-Web (VM2-DB ให้เปลี่ยนเป็น .20)
+      routes:
+        - to: default
+          via: 192.168.1xx.1 # Gateway ของ NAT Network
+      nameservers:
+        addresses: [8.8.8.8, 8.8.4.4, 1.1.1.1]
+
+---
+# ==============================================================================
+# รูปแบบที่ 2: ตั้งค่า Dual Adapters (Adapter 1: NAT Network + Adapter 2: Host-Only)
+# Adapter 1 (enp0s3) ใช้คุยกันเองในวงและออกเน็ต / Adapter 2 (enp0s8) ให้ Host OS ต่อตรง
+# ==============================================================================
+# network:
+#   version: 2
+#   ethernets:
+#     enp0s3: # NAT Network (ออกเน็ต + คุยระหว่าง VM)
+#       dhcp4: no
+#       addresses:
+#         - 192.168.1xx.10/24
+#       routes:
+#         - to: default
+#           via: 192.168.1xx.1
+#       nameservers:
+#         addresses: [8.8.8.8, 8.8.4.4]
+#     enp0s8: # Host-Only Adapter (Host คุยกับ VM ได้โดยตรง ไม่ต้องทำ Port Forward)
+#       dhcp4: no
+#       addresses:
+#         - 192.168.56.10/24 # (Host-Only Network วงปกติจะเป็น 192.168.56.x)

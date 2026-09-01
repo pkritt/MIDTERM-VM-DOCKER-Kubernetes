@@ -1,0 +1,58 @@
+---
+# ==============================================================
+# 1. Service แบบ NodePort: เปิดให้ Client ภายนอกเข้าถึงผ่าน NodePort
+# ==============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+spec:
+  type: NodePort # เปิดพอร์ตระดับโหนดเพื่อให้เข้าถึงได้จากภายนอก
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080 # เข้าเว็บได้ผ่าน http://<Node-IP>:30080 หรือ http://localhost:30080
+  selector:
+    app: web
+
+---
+# ==============================================================
+# 2. Deployment: สำหรับ Stateless Web Application (Scale ได้ง่าย)
+# ==============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+spec:
+  replicas: 2 # สามารถ Scale ขยาย Pod ได้ทันทีโดยไม่มีผลกระทบต่อ State
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: wordpress
+          image: wordpress:latest
+          env:
+            - name: WORDPRESS_DB_HOST
+              valueFrom:
+                configMapRef:
+                  name: app-config
+                  key: DB_HOST
+            - name: WORDPRESS_DB_NAME
+              valueFrom:
+                configMapRef:
+                  name: app-config
+                  key: DB_NAME
+            - name: WORDPRESS_DB_USER
+              value: "root"
+            - name: WORDPRESS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: db-password
+          ports:
+            - containerPort: 80

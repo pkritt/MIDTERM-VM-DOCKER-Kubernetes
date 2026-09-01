@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # ==============================================================
+  # 1. Stateful Service: Database (MySQL 8.0)
+  # มีการเก็บข้อมูลลงใน Persistent Volume (db_data) เพื่อไม่ให้ข้อมูลสูญหาย
+  # ==============================================================
+  db:
+    image: mysql:8.0
+    container_name: exam_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: exam_db
+    volumes:
+      - db_data:/var/lib/mysql # เก็บข้อมูล Stateful ให้คงอยู่ แม้ Container จะถูกลบ
+    ports:
+      - "3306:3306"
+    networks:
+      - exam_network
+
+  # ==============================================================
+  # 2. Stateless Service: Web Application (WordPress / Nginx)
+  # ไม่มีสถานะผูกติดในเครื่อง สามารถสร้างใหม่หรือ Recreate ได้ตลอดเวลา
+  # ==============================================================
+  web:
+    image: wordpress:latest
+    container_name: exam_web
+    restart: always
+    depends_on:
+      - db
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: rootpassword
+      WORDPRESS_DB_NAME: exam_db
+    ports:
+      - "8080:80"
+    networks:
+      - exam_network
+
+  # (ทางเลือก) กรณีโจทย์ให้ใช้ Custom Dockerfile ที่เรา Build เอง
+  # custom-web:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: exam_custom_web
+  #   ports:
+  #     - "8081:80"
+  #   networks:
+  #     - exam_network
+
+volumes:
+  db_data:
+    driver: local
+
+networks:
+  exam_network:
+    driver: bridge

@@ -1,0 +1,53 @@
+---
+# ==============================================================
+# 1. Headless Service: สำหรับ StatefulSet
+# กำหนด clusterIP: None เพื่อให้ Pod ได้รับ DNS Name ที่เสถียร (mysql-0.mysql-service)
+# ==============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  clusterIP: None # Headless Service สำหรับ StatefulSet
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app: mysql
+
+---
+# ==============================================================
+# 2. StatefulSet: สำหรับจัดการ Stateful Application (Database)
+# มีเอกลักษณ์ของ Pod คงที่ (mysql-0, mysql-1) และรักษาลำดับการรัน
+# ==============================================================
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  serviceName: "mysql-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: db-password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapRef:
+                  name: app-config
+                  key: DB_NAME
+          ports:
+            - containerPort: 3306
