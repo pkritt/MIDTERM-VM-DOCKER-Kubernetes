@@ -46,7 +46,7 @@ spec:
                   key: db-password
             - name: MYSQL_DATABASE
               valueFrom:
-                configMapRef:
+                configMapKeyRef:
                   name: app-config
                   key: DB_NAME
           ports:

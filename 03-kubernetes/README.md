@@ -121,7 +121,7 @@ spec:
                   key: db-password          # ดึงค่าจาก Key "db-password"
             - name: MYSQL_DATABASE          # ตัวแปรสำหรับสร้าง Database เริ่มต้น
               valueFrom:                    # สั่งให้ดึงค่ามาจาก ConfigMap
-                configMapRef:
+                configMapKeyRef:
                   name: app-config          # อ้างถึง ConfigMap ชื่อ "app-config"
                   key: DB_NAME              # ดึงค่าจาก Key "DB_NAME"
           ports:
@@ -176,12 +176,12 @@ spec:
           env:
             - name: WORDPRESS_DB_HOST       # ตัวแปรระบุที่อยู่ของ MySQL Server
               valueFrom:
-                configMapRef:
+                configMapKeyRef:
                   name: app-config
                   key: DB_HOST              # ได้ค่าเป็น "mysql-0.mysql-service:3306"
             - name: WORDPRESS_DB_NAME       # ตัวแปรระบุชื่อ Database
               valueFrom:
-                configMapRef:
+                configMapKeyRef:
                   name: app-config
                   key: DB_NAME              # ได้ค่าเป็น "exam_db"
             - name: WORDPRESS_DB_USER       # ระบุ User ที่ใช้เชื่อมต่อ
@@ -251,7 +251,7 @@ spec:
    * ใน Service: `spec.selector.app: XXX` ⟷ Pod Label `app: XXX`
 3. **การดึงค่าจาก Secret และ ConfigMap:**
    * ดึงจาก Secret: ใช้บล็อก `secretKeyRef` ระบุ `name` และ `key`
-   * ดึงจาก ConfigMap: ใช้บล็อก `configMapRef` ระบุ `name` และ `key`
+   * ดึงจาก ConfigMap: ใช้บล็อก `configMapKeyRef` ระบุ `name` และ `key`
 4. **ช่วงพอร์ตของ NodePort:** พอร์ตภายนอกที่กำหนดใน `nodePort` จะต้องอยู่ในช่วง **`30000 - 32767`** เสมอ (เช่น `30080`)
 5. **ลำดับการ Apply:** ต้องสร้าง `Secret / ConfigMap` ก่อนสร้าง `Pod / Deployment` เสมอ
 
